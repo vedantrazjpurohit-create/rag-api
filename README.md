@@ -26,12 +26,24 @@ uvicorn app.main:app --reload --port 8000
 ## Example
 
 ```bash
+curl http://localhost:8000/health
+
 curl -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
   -d "{\"question\": \"What chunk size worked better?\"}"
 ```
 
-Response includes `X-Retrieve-Ms` and `X-Total-Ms` headers for quick profiling.
+Example response body:
+
+```json
+{
+  "answer": "Top match suggests: ...",
+  "contexts": [{"text": "...", "source": "upload", "score": 0.91}],
+  "timing_ms": {"retrieve": 14.2, "total": 15.1}
+}
+```
+
+Response headers include `X-Retrieve-Ms` and `X-Total-Ms` for quick profiling.
 
 ## Stack
 
