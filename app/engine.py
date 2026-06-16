@@ -38,8 +38,18 @@ class RagEngine:
             docs.append(chunk)
             metas.append({"source": source, "chunk_index": idx})
 
-        self.collection.add(ids=ids, documents=docs, embeddings=embeddings, metadatas=metas)
+        self.collection.upsert(ids=ids, documents=docs, embeddings=embeddings, metadatas=metas)
         return len(chunks)
+
+    def stats(self) -> dict:
+        count = self.collection.count()
+        sources: set[str] = set()
+        if count:
+            batch = self.collection.get(include=["metadatas"])
+            for meta in batch.get("metadatas") or []:
+                if meta and "source" in meta:
+                    sources.add(str(meta["source"]))
+        return {"chunk_count": count, "source_count": len(sources), "sources": sorted(sources)}
 
     def query(self, question: str, top_k: int = 5) -> QueryResult:
         started = time.perf_counter()

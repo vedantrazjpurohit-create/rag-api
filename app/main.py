@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -18,12 +18,24 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/stats")
+def stats() -> dict:
+    return engine.stats()
+
+
 @app.post("/ingest")
 async def ingest(file: UploadFile = File(...)) -> dict:
     raw = await file.read()
-    text = raw.decode("utf-8", errors="ignore")
-    count = engine.ingest_text(text, source=file.filename or "upload")
-    return {"chunks_indexed": count, "source": file.filename}
+    if not raw.strip():
+        raise HTTPException(status_code=422, detail="Uploaded file is empty")
+
+    text = raw.decode("utf-8", errors="ignore").strip()
+    if not text:
+        raise HTTPException(status_code=422, detail="Uploaded file has no readable text")
+
+    source = file.filename or "upload"
+    count = engine.ingest_text(text, source=source)
+    return {"chunks_indexed": count, "source": source}
 
 
 @app.post("/query")
