@@ -48,3 +48,9 @@ Response headers include `X-Retrieve-Ms` and `X-Total-Ms` for quick profiling.
 ## Stack
 
 FastAPI · ChromaDB · sentence-transformers · Python 3.11+
+
+## Related repos
+
+- [rag-eval-bench](https://github.com/vedantrazjpurohit-create/rag-eval-bench) — offline eval + JSON run artifacts
+- [aruco-localizer](https://github.com/vedantrazjpurohit-create/aruco-localizer) — OpenCV pose pipeline
+- [student-crud-c](https://github.com/vedantrazjpurohit-create/student-crud-c) — C fundamentals practice
